@@ -19,13 +19,15 @@ from rest_framework import routers
 
 from goods import views
 
-router = routers.DefaultRouter()
+router = routers.DefaultRouter() # 路由会显示在页面上
+# router = routers.SimpleRouter() # 路由不会显示在页面上
 router.register(r'categorys',views.CategoryListView,basename='categorys')
+router.register(r'goods',views.GoodsListView,basename='goods')
 
 urlpatterns = [
     path('', include(router.urls)),
     path('admin/', admin.site.urls),
-    path('goods/', views.GoodsListView.as_view()),
+    # path('goods/', views.GoodsListView.as_view()),
     # path('categorys/', views.CategoryListView.as_view()),
     path('api-auth/', include('rest_framework.urls'))
 ]

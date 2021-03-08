@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from django.views import View
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, generics
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import viewsets
 # Create your views here.
+from goods.myfilter import GoodsFilter
 from goods.models import Goods, GoodsCategory
 
 # class GoodsListView(View):
@@ -74,7 +76,7 @@ class GoodsListView(generics.ListAPIView):
 
 
 class CategoryResultsSetPagination(PageNumberPagination):
-    page_size = 1
+    page_size = 10
     page_size_query_param = 'p'
     max_page_size = 1000
 
@@ -102,3 +104,50 @@ class CategoryListView(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Cr
    serializer_class = GoodsCategorySerializer
    # 分页
    pagination_class = CategoryResultsSetPagination
+
+
+class GoodsListView(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins.RetrieveModelMixin):
+   """
+   返回商品列表页
+   """
+   #得到所有的商品
+   # queryset = Goods.objects.all()[:10]
+   queryset = Goods.objects.all()
+   # queryset = Goods.objects.filter(name__icontains='茶')
+   #序列化器
+   serializer_class = GoodsSerializer
+   # 分页
+   pagination_class = CategoryResultsSetPagination
+
+   def get_queryset(self):
+       print('我是get_queryset')
+       queryset = self.queryset
+       query_c = self.request.query_params.get('name')
+       query_price = self.request.query_params.get('price')
+
+       print('query_c',query_c)
+       if query_c:
+           queryset = queryset.filter(name__icontains=query_c)
+
+       if query_price:
+           queryset = queryset.filter(shop_price__gte=query_price)
+       return queryset
+
+
+class GoodsListView(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins.RetrieveModelMixin):
+   """
+   返回商品列表页
+   """
+   #得到所有的商品
+   # queryset = Goods.objects.all()[:10]
+   queryset = Goods.objects.all()
+   # queryset = Goods.objects.filter(name__icontains='茶')
+   #序列化器
+   serializer_class = GoodsSerializer
+   # 分页
+   pagination_class = CategoryResultsSetPagination
+
+   filter_backends = (DjangoFilterBackend,)
+   # filter_fields = ('name', 'shop_price')
+
+   filter_class =  GoodsFilter

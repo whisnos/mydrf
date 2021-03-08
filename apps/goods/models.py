@@ -42,7 +42,7 @@ class Goods(models.Model):
     fav_num=models.IntegerField(default=0, verbose_name="收藏数")
     goods_num=models.IntegerField(default=0, verbose_name="库存数")
     market_price=models.FloatField(default=0, verbose_name="市场价格")
-    shop_price=models.FloatField(default=0, verbose_name="本店价格")
+    shop_price=models.FloatField(default=0, verbose_name="shop_price")
     goods_brief=models.TextField(max_length=500, verbose_name="商品简短描述")
     # goods_desc=UEditorField(verbose_name="内容", imagePath="goods/images/", width=1000, height=300,
     #                           filePath="goods/files/", default='')
