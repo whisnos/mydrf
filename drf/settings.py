@@ -68,6 +68,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
             ],
         },
     },
@@ -135,3 +136,8 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 1,
     # 'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
 }
+
+# 配合图片上传（图片上传到的地址+model下上传的目录）
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media/')
+# 图片访问url
+MEDIA_URL = '/media/'

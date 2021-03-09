@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views import View
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, generics
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -35,7 +36,7 @@ from goods.models import Goods, GoodsCategory
 #         print(type(content))
 #         # ，在转换成json
 #         return HttpResponse(content, "application/json")
-from goods.serializer import GoodsSerializer, GoodsCategorySerializer
+from goods.serializer import GoodsSerializer, GoodsCategorySerializer, GoodsCreatSerializer
 
 
 class GoodsListView(APIView):
@@ -143,11 +144,17 @@ class GoodsListView(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Creat
    queryset = Goods.objects.all()
    # queryset = Goods.objects.filter(name__icontains='茶')
    #序列化器
-   serializer_class = GoodsSerializer
+   # serializer_class = GoodsSerializer
    # 分页
    pagination_class = CategoryResultsSetPagination
 
-   filter_backends = (DjangoFilterBackend,)
+   filter_backends = (DjangoFilterBackend,SearchFilter,OrderingFilter)
    # filter_fields = ('name', 'shop_price')
-
+   search_fields = ('name', 'goods_brief', 'goods_desc')
+   ordering_fields = ('shop_price', 'sold_num')
    filter_class =  GoodsFilter
+   def get_serializer_class(self):
+       if self.action == 'list':
+           return GoodsSerializer
+       elif self.action =='create':
+           return GoodsCreatSerializer

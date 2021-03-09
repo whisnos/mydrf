@@ -24,6 +24,7 @@ class GoodsCategorySerializer(serializers.ModelSerializer):
 
 class GoodsSerializer(serializers.ModelSerializer):
     category = GoodsCategorySerializer()
+    # goods_front_iamge = serializers.CharField(default='')
     class Meta:
         model = Goods
         # fields = ['name', 'is_new']

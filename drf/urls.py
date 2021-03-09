@@ -13,10 +13,14 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.contrib import admin
 from django.urls import path, re_path, include
+from django.views import static
+from django.views.static import serve
 from rest_framework import routers
 
+from drf.settings import MEDIA_ROOT
 from goods import views
 
 router = routers.DefaultRouter() # 路由会显示在页面上
@@ -29,5 +33,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # path('goods/', views.GoodsListView.as_view()),
     # path('categorys/', views.CategoryListView.as_view()),
-    path('api-auth/', include('rest_framework.urls'))
+    path('api-auth/', include('rest_framework.urls')),
+    # re_path(r'^static/(?P<path>.*)$', static.serve, {'document_root': settings.STATIC_ROOT}, name='static'),
+    re_path(r'^media/(?P<path>.*)$', serve, {"document_root": MEDIA_ROOT}),
 ]
