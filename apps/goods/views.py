@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import viewsets
 # Create your views here.
-from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+# from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
 from goods.myfilter import GoodsFilter
 from goods.models import Goods, GoodsCategory
@@ -159,14 +159,14 @@ class GoodsListView(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Creat
 
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     # filter_fields = ('name', 'shop_price')
-    search_fields = ('name', 'goods_brief', 'goods_desc')
+    search_fields = ('name', 'goods_brief', 'goods_desc', 'click_num', 'category__name')
     ordering_fields = ('shop_price', 'sold_num')
     filter_class = GoodsFilter
 
     # 只在当前接口做Token认证，注意是元组要写上逗号
     # authentication_classes = (TokenAuthentication,)
     # 只在当前接口做JWT认证，注意是元组要写上逗号
-    authentication_classes = (JSONWebTokenAuthentication,)
+    # authentication_classes = (JSONWebTokenAuthentication,)
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -174,12 +174,12 @@ class GoodsListView(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Creat
         elif self.action == 'create':
             return GoodsCreatSerializer
 
-    def create(self, request, *args, **kwargs):
-        print(self.request.user)
-        print(self.request.auth)
-        print(self.request.authenticators)
-        # serializer = self.get_serializer(data=request.data)
-        # serializer.is_valid(raise_exception=True)
-        # self.perform_create(serializer)
-        # headers = self.get_success_headers(serializer.data)
-        return Response({}, status=201)
+    # def create(self, request, *args, **kwargs):
+    #     print(self.request.user)
+    #     print(self.request.auth)
+    #     print(self.request.authenticators)
+    #     # serializer = self.get_serializer(data=request.data)
+    #     # serializer.is_valid(raise_exception=True)
+    #     # self.perform_create(serializer)
+    #     # headers = self.get_success_headers(serializer.data)
+    #     return Response({}, status=201)

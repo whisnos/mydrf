@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'goods.apps.GoodsConfig',
     'rest_framework',
     'django_filters',
-    'rest_framework.authtoken',
+    # 'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -141,7 +141,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         # 'rest_framework.authentication.TokenAuthentication',
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        # 'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     )
 }
 
@@ -151,10 +151,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media/')
 MEDIA_URL = '/media/'
 
 import datetime
-JWT_AUTH = {
-    #300秒后到期，修改成7天后到期
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
-    #自定义前缀，使用默认的就行
-    'JWT_AUTH_HEADER_PREFIX': 'JWT',
-
-}
+# JWT_AUTH = {
+#     #300秒后到期，修改成7天后到期
+#     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
+#     #自定义前缀，使用默认的就行
+#     'JWT_AUTH_HEADER_PREFIX': 'JWT',
+#
+# }

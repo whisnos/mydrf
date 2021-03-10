@@ -35,5 +35,5 @@ class GoodsCreatSerializer(serializers.ModelSerializer):
     # category = GoodsCategorySerializer()
     class Meta:
         model = Goods
-        # fields = ['name', 'is_new']
+        # fields = ['name', 'is_new','goods_front_iamge']
         fields = '__all__'

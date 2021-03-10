@@ -22,7 +22,7 @@ from rest_framework import routers
 
 from drf.settings import MEDIA_ROOT
 from goods import views
-from rest_framework_jwt.views import obtain_jwt_token
+# from rest_framework_jwt.views import obtain_jwt_token
 
 router = routers.DefaultRouter() # 路由会显示在页面上
 # router = routers.SimpleRouter() # 路由不会显示在页面上
@@ -38,5 +38,5 @@ urlpatterns = [
     # re_path(r'^static/(?P<path>.*)$', static.serve, {'document_root': settings.STATIC_ROOT}, name='static'),
     re_path(r'^media/(?P<path>.*)$', serve, {"document_root": MEDIA_ROOT}),
     re_path(r'^api-token-auth/', views_token.obtain_auth_token),
-    re_path(r'^jwt-token-auth/', obtain_jwt_token),
+    # re_path(r'^jwt-token-auth/', obtain_jwt_token),
 ]
