@@ -2,12 +2,15 @@ from django.shortcuts import render
 from django.views import View
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, generics
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import viewsets
 # Create your views here.
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+
 from goods.myfilter import GoodsFilter
 from goods.models import Goods, GoodsCategory
 
@@ -43,6 +46,7 @@ class GoodsListView(APIView):
     """
        返回商品列表页1
        """
+
     def get(self, request):
         # 返回前所有商品的前10条数据
         goods_list = Goods.objects.all()[:10]
@@ -51,29 +55,30 @@ class GoodsListView(APIView):
 
 
 class GoodsListView(mixins.ListModelMixin, generics.GenericAPIView):
-   """
-   返回商品列表页
-   """
-   #得到所有的商品
-   queryset = Goods.objects.all()[:10]
-   #序列化器
-   serializer_class = GoodsSerializer
+    """
+    返回商品列表页
+    """
+    # 得到所有的商品
+    queryset = Goods.objects.all()[:10]
+    # 序列化器
+    serializer_class = GoodsSerializer
 
-   def get(self, request, *args, **kwargs):
-      return self.list(request, *args, **kwargs)
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
 
 class GoodsListView(generics.ListAPIView):
-   """
-   返回商品列表页
-   """
-   #得到所有的商品
-   # queryset = Goods.objects.all()[:10]
-   queryset = Goods.objects.all()
-   #序列化器
-   serializer_class = GoodsSerializer
+    """
+    返回商品列表页
+    """
+    # 得到所有的商品
+    # queryset = Goods.objects.all()[:10]
+    queryset = Goods.objects.all()
+    # 序列化器
+    serializer_class = GoodsSerializer
 
-   # def get(self, request, *args, **kwargs):
-   #    return self.list(request, *args, **kwargs)
+    # def get(self, request, *args, **kwargs):
+    #    return self.list(request, *args, **kwargs)
 
 
 class CategoryResultsSetPagination(PageNumberPagination):
@@ -81,80 +86,100 @@ class CategoryResultsSetPagination(PageNumberPagination):
     page_size_query_param = 'p'
     max_page_size = 1000
 
+
 class CategoryListView(generics.ListAPIView):
-   """
-   返回商品列表页
-   """
-   #得到所有的商品
-   # queryset = Goods.objects.all()[:10]
-   queryset = GoodsCategory.objects.all()
-   #序列化器
-   serializer_class = GoodsCategorySerializer
-   # 分页
-   pagination_class = CategoryResultsSetPagination
+    """
+    返回商品列表页
+    """
+    # 得到所有的商品
+    # queryset = Goods.objects.all()[:10]
+    queryset = GoodsCategory.objects.all()
+    # 序列化器
+    serializer_class = GoodsCategorySerializer
+    # 分页
+    pagination_class = CategoryResultsSetPagination
 
 
-class CategoryListView(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins.RetrieveModelMixin):
-   """
-   返回商品列表页
-   """
-   #得到所有的商品
-   # queryset = Goods.objects.all()[:10]
-   queryset = GoodsCategory.objects.all()
-   #序列化器
-   serializer_class = GoodsCategorySerializer
-   # 分页
-   pagination_class = CategoryResultsSetPagination
+class CategoryListView(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin,
+                       mixins.DestroyModelMixin, mixins.RetrieveModelMixin):
+    """
+    返回商品列表页
+    """
+    # 得到所有的商品
+    # queryset = Goods.objects.all()[:10]
+    queryset = GoodsCategory.objects.all()
+    # 序列化器
+    serializer_class = GoodsCategorySerializer
+    # 分页
+    pagination_class = CategoryResultsSetPagination
 
 
-class GoodsListView(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins.RetrieveModelMixin):
-   """
-   返回商品列表页
-   """
-   #得到所有的商品
-   # queryset = Goods.objects.all()[:10]
-   queryset = Goods.objects.all()
-   # queryset = Goods.objects.filter(name__icontains='茶')
-   #序列化器
-   serializer_class = GoodsSerializer
-   # 分页
-   pagination_class = CategoryResultsSetPagination
+class GoodsListView(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin, mixins.DestroyModelMixin,
+                    mixins.RetrieveModelMixin):
+    """
+    返回商品列表页
+    """
+    # 得到所有的商品
+    # queryset = Goods.objects.all()[:10]
+    queryset = Goods.objects.all()
+    # queryset = Goods.objects.filter(name__icontains='茶')
+    # 序列化器
+    serializer_class = GoodsSerializer
+    # 分页
+    pagination_class = CategoryResultsSetPagination
 
-   def get_queryset(self):
-       print('我是get_queryset')
-       queryset = self.queryset
-       query_c = self.request.query_params.get('name')
-       query_price = self.request.query_params.get('price')
+    def get_queryset(self):
+        print('我是get_queryset')
+        queryset = self.queryset
+        query_c = self.request.query_params.get('name')
+        query_price = self.request.query_params.get('price')
 
-       print('query_c',query_c)
-       if query_c:
-           queryset = queryset.filter(name__icontains=query_c)
+        print('query_c', query_c)
+        if query_c:
+            queryset = queryset.filter(name__icontains=query_c)
 
-       if query_price:
-           queryset = queryset.filter(shop_price__gte=query_price)
-       return queryset
+        if query_price:
+            queryset = queryset.filter(shop_price__gte=query_price)
+        return queryset
 
 
-class GoodsListView(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins.RetrieveModelMixin):
-   """
-   返回商品列表页
-   """
-   #得到所有的商品
-   # queryset = Goods.objects.all()[:10]
-   queryset = Goods.objects.all()
-   # queryset = Goods.objects.filter(name__icontains='茶')
-   #序列化器
-   # serializer_class = GoodsSerializer
-   # 分页
-   pagination_class = CategoryResultsSetPagination
+class GoodsListView(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin, mixins.DestroyModelMixin,
+                    mixins.RetrieveModelMixin):
+    """
+    返回商品列表页
+    """
+    # 得到所有的商品
+    # queryset = Goods.objects.all()[:10]
+    queryset = Goods.objects.all()
+    # queryset = Goods.objects.filter(name__icontains='茶')
+    # 序列化器
+    # serializer_class = GoodsSerializer
+    # 分页
+    pagination_class = CategoryResultsSetPagination
 
-   filter_backends = (DjangoFilterBackend,SearchFilter,OrderingFilter)
-   # filter_fields = ('name', 'shop_price')
-   search_fields = ('name', 'goods_brief', 'goods_desc')
-   ordering_fields = ('shop_price', 'sold_num')
-   filter_class =  GoodsFilter
-   def get_serializer_class(self):
-       if self.action == 'list':
-           return GoodsSerializer
-       elif self.action =='create':
-           return GoodsCreatSerializer
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    # filter_fields = ('name', 'shop_price')
+    search_fields = ('name', 'goods_brief', 'goods_desc')
+    ordering_fields = ('shop_price', 'sold_num')
+    filter_class = GoodsFilter
+
+    # 只在当前接口做Token认证，注意是元组要写上逗号
+    # authentication_classes = (TokenAuthentication,)
+    # 只在当前接口做JWT认证，注意是元组要写上逗号
+    authentication_classes = (JSONWebTokenAuthentication,)
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return GoodsSerializer
+        elif self.action == 'create':
+            return GoodsCreatSerializer
+
+    def create(self, request, *args, **kwargs):
+        print(self.request.user)
+        print(self.request.auth)
+        print(self.request.authenticators)
+        # serializer = self.get_serializer(data=request.data)
+        # serializer.is_valid(raise_exception=True)
+        # self.perform_create(serializer)
+        # headers = self.get_success_headers(serializer.data)
+        return Response({}, status=201)

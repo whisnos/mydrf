@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'goods.apps.GoodsConfig',
     'rest_framework',
     'django_filters',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -53,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'goods.m1.Middle1',
 ]
 
 ROOT_URLCONF = 'drf.urls'
@@ -135,9 +137,24 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 1,
     # 'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    )
 }
 
 # 配合图片上传（图片上传到的地址+model下上传的目录）
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media/')
 # 图片访问url
 MEDIA_URL = '/media/'
+
+import datetime
+JWT_AUTH = {
+    #300秒后到期，修改成7天后到期
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
+    #自定义前缀，使用默认的就行
+    'JWT_AUTH_HEADER_PREFIX': 'JWT',
+
+}
